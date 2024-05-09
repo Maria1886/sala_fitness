@@ -1,5 +1,11 @@
 <?php
-require "../database/connection.php";
+$currentPath = __FILE__;
+$parentPath = dirname(dirname($currentPath));
+$thirdPath = $parentPath . '/database';
+var_dump(__DIR__ . "/../");
+// require $thirdPath . '/connection.php';
+
+// require "../database/connection.php";
 $sql="SELECT * FROM `antrenori`";
 $result = $connection->query($sql);
 ?>
@@ -46,20 +52,20 @@ $result = $connection->query($sql);
                     <?php echo $row["prenume"]?>
                 </td>
                 <td class="trainers_actions">
-                    <!-- <a href="trainers_template.php?id=">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                    </a> -->
-                    <form method="GET" onsubmit="stopRefresh(event)> 
-                    <input type="hidden" name="trainers_id" value="<?php echo $row['id'] ?>">
-                    <button class="edit_trainers_btn" type="submit">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                    </button>
-                    </form>
-                    <form action="" method="POST">
+                <a href="#" class="edit-trainer-btn" data-id="<?php echo $row['id']; ?>">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </a>
+                 <form action="delete_trainer.php" method="post">
+                    <input type="hidden" name="id" value="<?php echo $row["id"]; ?>">
+                    <button type="submit" onclick="return confirm('Sunteți sigur că doriți să ștergeți')">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+                </form>
+                    <!-- <form action="" method="POST">
                         <button type="submit">
                         <i class="fa-solid fa-trash-can"></i>
                         </button>
-                    </form>
+                    </form> -->
                 </td>
             </tr>
             <?php
@@ -77,10 +83,22 @@ $result = $connection->query($sql);
         </div>
         </div>
     </div>
-    <script>
-    function stopRefresh(event) {
-        event.preventDefault(); 
-    }
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script>
+        $(document).ready(function(){
+            $(".edit-trainer-btn").click(function(e){
+                e.preventDefault();
+                var trainerId = $(this).data('id');
+                $.ajax({
+                    url: 'edit_trainers_form.php',
+                    type: 'POST',
+                    data: { id: trainerId },
+                    success: function(response){
+                        $(".admin_add_trainer").html(response);
+                    }
+                });
+            });
+        });
     </script>
    <script src="../js/script.js"></script>
 </body>
